@@ -80,4 +80,33 @@ router.delete(
     }
 );
 
+router.put('/update/:fotocodigo',
+  function(req, res){
+      fotoCollection = fileModel.getFotografias();
+      var fotocodToModify = req.params.fotocodigo;    
+      var adjustType = req.body.linea;
+      var modFotografias ={};
+      var newFotografiasArray = fotoCollection.map(
+        function(o,i){
+          if( fotocodToModify === o.codigo){
+             o.url = adjustType;
+             modFotografias = Object.assign({}, o);
+          }
+          return o;
+        }
+      );
+    fotoCollection = newFotografiasArray;
+    fileModel.setFotografias(
+      fotoCollection,
+      function (err, savedSuccesfully) {
+        if (err) {
+            res.status(400).json({"Error en el aplicativo":"Error"});
+        } else {
+          res.json(modFotografias);
+        }
+      }
+    );
+  }
+);
+
 module.exports = router;
