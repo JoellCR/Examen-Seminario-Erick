@@ -26,9 +26,9 @@ router.post('/new', function(req,res){
         {},
         req.body,
         {
-            "title":(req.body.ttle),
+            "title":(req.body.title),
             "url": (req.body.url),
-            "thumbnailUrl": (res.body.thumbnailUrl),
+            "thumbnailUrl": (req.body.thumbnailUrl),
             "album": (req.body.album)
         }
     );
@@ -55,5 +55,29 @@ router.post('/new', function(req,res){
     }
 
 });
+
+router.delete(
+    '/delete/:fotocodigo',
+    function(req,res){
+        fotoCollection=fileModel.getFotografias();
+        var fotocodTodelete=req.params.fotocodigo;
+        var newfotoCollection=fotoCollection.filter(
+            function(o,i){
+                return fotocodTodelete!=o.codigo;
+            }
+        );
+        fotoCollection=newfotoCollection;
+        fileModel.setFotografias(
+            fotoCollection,
+            function(err,savedSuccesfully){
+                if(err){
+                    res.status(400).json({"Error en el aplicativo":"Error"});
+                }else{
+                    res.json({"Se encuentran: ":fotoCollection.length});
+                }
+            }
+        )
+    }
+);
 
 module.exports = router;
